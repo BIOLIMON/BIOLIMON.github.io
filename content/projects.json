@@ -1,9 +1,31 @@
 [
   {
+    "title": "PGR Lab",
+    "year": 2026,
+    "summary": "Website of the Plant Genome Regulation Lab at UNAB, part of the PhytoLearning Millennium Nucleus: research lines, team, publications and tools — with living ASCII motifs.",
+    "tags": [
+      "website",
+      "plant genomics",
+      "generative ASCII"
+    ],
+    "url": "https://pgrlab.cl/",
+    "repo": "https://github.com/BIOLIMON/pgrlab-site",
+    "featured": true,
+    "thumb": {
+      "type": "roots",
+      "seed": 3,
+      "branch": 0.1
+    }
+  },
+  {
     "title": "When was each gene born?",
     "year": 2026,
     "summary": "Phylostratigraphy of 27,420 Arabidopsis genes using Ensembl Compara, turned into an interactive web piece with sound.",
-    "tags": ["bioinformatics", "data art", "sonification"],
+    "tags": [
+      "bioinformatics",
+      "data art",
+      "sonification"
+    ],
     "url": "https://biolimon.github.io/cuando-nacio-cada-gen/",
     "repo": "https://github.com/BIOLIMON/cuando-nacio-cada-gen",
     "featured": true
@@ -12,7 +34,11 @@
     "title": "CDapp",
     "year": 2025,
     "summary": "A web app that uses generative AI to analyse crop data, built with Gemini and React.",
-    "tags": ["web app", "AI", "TypeScript"],
+    "tags": [
+      "web app",
+      "AI",
+      "TypeScript"
+    ],
     "url": "https://cultiva-datos.vercel.app",
     "repo": "https://github.com/BIOLIMON/CDapp",
     "featured": true
@@ -21,18 +47,13 @@
     "title": "Phytoboard",
     "year": 2026,
     "summary": "A dashboard for monitoring phytosanitary data in real time, built with React and TypeScript.",
-    "tags": ["dashboard", "TypeScript", "React"],
+    "tags": [
+      "dashboard",
+      "TypeScript",
+      "React"
+    ],
     "url": "",
     "repo": "https://github.com/BIOLIMON/phytoboard",
     "featured": true
-  },
-  {
-    "title": "PGR Lab website",
-    "year": 2026,
-    "summary": "The website of the PGR lab: plant science, genomics and research resources.",
-    "tags": ["website", "plant science"],
-    "url": "",
-    "repo": "https://github.com/BIOLIMON/pgrlab-site",
-    "featured": false
   }
 ]

@@ -92,7 +92,7 @@ p { margin: 0 0 1.1em; }
 
 /* ── cards ──────────────────────────────────────────── */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 1rem; }
-.card { display: flex; flex-direction: column; gap: .6rem; padding: 1.3rem; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; transition: border-color .2s ease, transform .2s ease; }
+.card { display: flex; flex-direction: column; padding: 1.3rem; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; transition: border-color .2s ease, transform .2s ease; }
 .card:hover { border-color: var(--accent); transform: translateY(-2px); }
 .card-top { display: flex; justify-content: space-between; align-items: center; gap: .8rem; font: .75rem var(--mono); color: var(--muted); }
 .card h3 a { color: var(--text); text-decoration: none; }
@@ -101,6 +101,20 @@ p { margin: 0 0 1.1em; }
 .card-links { display: flex; gap: 1rem; margin-top: auto !important; padding-top: .5rem; font: .8rem var(--mono); }
 .tags { display: flex; flex-wrap: wrap; gap: .4rem; list-style: none; padding: 0; margin: 0; }
 .tag { font: .72rem var(--mono); padding: .1rem .6rem; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); white-space: nowrap; }
+
+.card-body { display: flex; flex-direction: column; gap: .6rem; flex: 1; min-width: 0; }
+
+/* a project with a picture: spans the full row, picture on the left */
+.card.has-thumb { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 1.6rem; padding: 1rem; align-items: stretch; }
+.card.has-thumb h3 { font-size: 1.55rem; }
+.card.has-thumb .card-body { padding: .6rem .6rem .6rem 0; }
+.thumb { position: relative; display: block; aspect-ratio: 16 / 10; background: #d8dacf; border-radius: 6px; overflow: hidden; }
+.roots { position: absolute; inset: 0; padding: .4rem .5rem; }
+/* the lab's own palette, on purpose the same in dark and light: it is a window onto their site */
+.ascii { margin: 0; overflow: hidden; white-space: pre; user-select: none; font: 13px/1 var(--mono); letter-spacing: .02em; color: #a3a796; }
+.ascii b { font-weight: 500; color: #6f9a35; }
+.ascii i { font-style: normal; color: #2a5530; }
+.ascii u { text-decoration: none; color: #4c5045; }
 
 /* ── post list ──────────────────────────────────────── */
 .posts { list-style: none; padding: 0; margin: 0; }
@@ -151,6 +165,10 @@ p { margin: 0 0 1.1em; }
 #arrive { position: fixed; inset: 0; z-index: 50; background: #000; pointer-events: none; animation: lift .9s ease-out .05s forwards; }
 @keyframes lift { to { opacity: 0; visibility: hidden; } }
 
+@media (max-width: 760px) {
+  .card.has-thumb { grid-template-columns: 1fr; gap: 1rem; }
+  .card.has-thumb .card-body { padding: 0 .3rem .3rem; }
+}
 @media (max-width: 640px) {
   .post-row { grid-template-columns: 1fr; }
   .post-row time { padding-top: 0; }

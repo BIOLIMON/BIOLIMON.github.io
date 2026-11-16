@@ -243,14 +243,22 @@ def card(p):
         links.append('<a href="%s"%s>Live site ↗</a>' % (e(p["url"]), ext(p["url"])))
     if p.get("repo"):
         links.append('<a href="%s"%s>Code ↗</a>' % (e(p["repo"]), ext(p["repo"])))
+    thumb, cls = "", "card"
+    t = p.get("thumb")
+    if t and t.get("type") == "roots":                         # an animated ASCII root as the project's picture
+        cls += " has-thumb"
+        thumb = ('<a class="thumb" href="%s"%s tabindex="-1" aria-hidden="true">'
+                 '<div class="roots" data-roots data-seed="%d" data-branch="%s"></div></a>'
+                 ) % (e(main), ext(main), int(t.get("seed", 3)), float(t.get("branch", 0.1)))
     return (
-        '<article class="card">'
+        '<article class="%s">%s<div class="card-body">'
         '<div class="card-top"><span>%s</span></div>'
         '<h3><a href="%s"%s>%s</a></h3>'
         '<p>%s</p>%s'
         '<p class="card-links">%s</p>'
-        '</article>'
-    ) % (e(str(p.get("year", ""))), e(main), ext(main), e(p["title"]), e(p["summary"]), tag_list(p.get("tags", [])), " ".join(links))
+        '</div></article>'
+    ) % (cls, thumb, e(str(p.get("year", ""))), e(main), ext(main), e(p["title"]), e(p["summary"]),
+         tag_list(p.get("tags", [])), " ".join(links))
 
 
 def post_row(p, up):
@@ -261,7 +269,7 @@ def post_row(p, up):
     ) % (p["date"].isoformat(), fmt_date(p["date"]), up, e(p["slug"]), e(p["title"]), summary, tag_list(p["tags"]))
 
 
-def layout(*, title, desc, depth, body, active="", url_path="", og_type="website", arrive=False):
+def layout(*, title, desc, depth, body, active="", url_path="", og_type="website", arrive=False, scripts=False):
     up = "../" * depth
     nav = "".join(
         '<a href="%s%s/"%s>%s</a>' % (up, key, ' aria-current="page"' if key == active else "", label)
@@ -307,12 +315,13 @@ def layout(*, title, desc, depth, body, active="", url_path="", og_type="website
     </ul>
   </div>
 </footer>
-</body>
+{scripts}</body>
 </html>
 """.format(
         title=e(full_title), desc=e(desc), og_type=og_type, url=e(page_url), name=e(SITE["name"]),
         full_name=e(SITE["full_name"]), icon=ICON, up=up, nav=nav, body=body, year=datetime.date.today().year,
-        arrive='<div id="arrive" aria-hidden="true"></div>\n' if arrive else "")
+        arrive='<div id="arrive" aria-hidden="true"></div>\n' if arrive else "",
+        scripts=('<script src="%sroots.js" defer></script>\n' % up) if scripts else "")
 
 
 def write(path, text):
@@ -352,7 +361,8 @@ def build():
 </section>""".format(
         eyebrow=e(SITE["eyebrow"]), headline=e(SITE["headline"]), tagline=e(SITE["tagline"]), social=social(),
         cards="".join(card(p) for p in featured), latest=latest)
-    write(OUT / "index.html", layout(title="", desc=SITE["description"], depth=0, body=home, arrive=True))
+    write(OUT / "index.html", layout(title="", desc=SITE["description"], depth=0, body=home, arrive=True,
+                                     scripts=any(p.get("thumb") for p in featured)))
 
     # work
     work = """<section class="wrap page-head">
@@ -363,7 +373,7 @@ def build():
 <section class="wrap section"><div class="grid">{cards}</div></section>""".format(cards="".join(card(p) for p in projects))
     write(OUT / "work" / "index.html", layout(
         title="Work", desc="Selected projects by %s: bioinformatics, data tools and generative art." % SITE["full_name"],
-        depth=1, body=work, active="work", url_path="work/"))
+        depth=1, body=work, active="work", url_path="work/", scripts=any(p.get("thumb") for p in projects)))
 
     # blog index
     listing = ('<ul class="posts">%s</ul>' % "".join(post_row(p, "../") for p in posts)) if posts \
