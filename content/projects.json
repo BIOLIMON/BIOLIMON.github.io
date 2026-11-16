@@ -18,6 +18,28 @@
     }
   },
   {
+    "title": "WIP: AgroShield",
+    "year": 2026,
+    "summary": "A carrier board for low-power agricultural sensing, part of the AgroPhy project: sockets for a Seeed XIAO nRF52840 and a LoRa module, four Watermark soil-moisture inputs, a temperature probe, and battery plus solar power. Designed in KiCad; the routed layout is under review and nothing has been manufactured yet.",
+    "tags": [
+      "hardware",
+      "PCB design",
+      "LoRa",
+      "open hardware"
+    ],
+    "url": "",
+    "repo": "",
+    "featured": true,
+    "thumb": {
+      "type": "image",
+      "src": "media/agroshield.gif",
+      "still": "media/agroshield-still.png",
+      "alt": "3D render of the AgroShield circuit board spinning on one of its corners",
+      "width": 560,
+      "height": 420
+    }
+  },
+  {
     "title": "When was each gene born?",
     "year": 2026,
     "summary": "Phylostratigraphy of 27,420 Arabidopsis genes using Ensembl Compara, turned into an interactive web piece with sound.",

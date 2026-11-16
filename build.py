@@ -237,29 +237,47 @@ def social():
         '<li><a href="%s"%s>%s</a></li>' % (e(l["url"]), ext(l["url"]), e(l["label"])) for l in SITE["links"])
 
 
-def card(p):
-    main = p.get("url") or p.get("repo") or "#"
+def thumb_box(inner, main, decorative):
+    """The picture of a project card: a link to the project when it has one, a plain box otherwise."""
+    if main:
+        return '<a class="thumb" href="%s"%s tabindex="-1"%s>%s</a>' % (
+            e(main), ext(main), ' aria-hidden="true"' if decorative else "", inner)
+    return '<div class="thumb"%s>%s</div>' % (' aria-hidden="true"' if decorative else "", inner)
+
+
+def card(p, up=""):
+    """`up` is the relative path from the page to portal/ (so media/… resolves from any depth)."""
+    url, repo = p.get("url", ""), p.get("repo", "")
+    main = url or repo
     links = []
-    if p.get("url"):
-        links.append('<a href="%s"%s>Live site ↗</a>' % (e(p["url"]), ext(p["url"])))
-    if p.get("repo"):
-        links.append('<a href="%s"%s>Code ↗</a>' % (e(p["repo"]), ext(p["repo"])))
+    if url:
+        links.append('<a href="%s"%s>Live site ↗</a>' % (e(url), ext(url)))
+    if repo:
+        links.append('<a href="%s"%s>Code ↗</a>' % (e(repo), ext(repo)))
     thumb, cls = "", "card"
-    t = p.get("thumb")
-    if t and t.get("type") == "roots":                         # an animated ASCII root as the project's picture
+    t = p.get("thumb") or {}
+    if t.get("type") == "roots":                               # an animated ASCII root
         cls += " has-thumb"
-        thumb = ('<a class="thumb" href="%s"%s tabindex="-1" aria-hidden="true">'
-                 '<div class="roots" data-roots data-seed="%d" data-branch="%s"></div></a>'
-                 ) % (e(main), ext(main), int(t.get("seed", 3)), float(t.get("branch", 0.1)))
+        thumb = thumb_box('<div class="roots" data-roots data-seed="%d" data-branch="%s"></div>'
+                          % (int(t.get("seed", 3)), float(t.get("branch", 0.1))), main, True)
+    elif t.get("type") == "image":                             # a picture or an animated GIF, with an optional still
+        cls += " has-thumb"
+        alt = e(t.get("alt", p["title"]), quote=True)
+        size = ' width="%d" height="%d"' % (int(t["width"]), int(t["height"])) if t.get("width") else ""
+        img = '<img class="%s" src="%s%s" alt="%s"%s loading="lazy" decoding="async">'
+        inner = img % ("anim", up, e(t["src"]), alt, size)
+        if t.get("still"):                                     # shown instead of the GIF when the visitor asks for reduced motion
+            inner += img % ("still", up, e(t["still"]), alt, size)
+        thumb = thumb_box(inner, main, False)
+    title = '<a href="%s"%s>%s</a>' % (e(main), ext(main), e(p["title"])) if main else e(p["title"])
     return (
         '<article class="%s">%s<div class="card-body">'
         '<div class="card-top"><span>%s</span></div>'
-        '<h3><a href="%s"%s>%s</a></h3>'
-        '<p>%s</p>%s'
-        '<p class="card-links">%s</p>'
+        '<h3>%s</h3>'
+        '<p>%s</p>%s%s'
         '</div></article>'
-    ) % (cls, thumb, e(str(p.get("year", ""))), e(main), ext(main), e(p["title"]), e(p["summary"]),
-         tag_list(p.get("tags", [])), " ".join(links))
+    ) % (cls, thumb, e(str(p.get("year", ""))), title, e(p["summary"]), tag_list(p.get("tags", [])),
+         '<p class="card-links">%s</p>' % " ".join(links) if links else "")
 
 
 def post_row(p, up):
@@ -368,7 +386,7 @@ def build():
   {latest}
 </section>""".format(
         eyebrow=e(SITE["eyebrow"]), headline=e(SITE["headline"]), tagline=e(SITE["tagline"]), social=social(),
-        cards="".join(card(p) for p in featured), latest=latest)
+        cards="".join(card(p, "") for p in featured), latest=latest)
     write(OUT / "index.html", layout(title="", desc=SITE["description"], depth=0, body=home, arrive=True,
                                      scripts=any(p.get("thumb") for p in featured)))
 
@@ -378,7 +396,7 @@ def build():
   <h1>Things I've built</h1>
   <p class="lead">Science, data tools and a bit of art. The code for most of it is open on GitHub.</p>
 </section>
-<section class="wrap section"><div class="grid">{cards}</div></section>""".format(cards="".join(card(p) for p in projects))
+<section class="wrap section"><div class="grid">{cards}</div></section>""".format(cards="".join(card(p, "../") for p in projects))
     write(OUT / "work" / "index.html", layout(
         title="Work", desc="Selected projects by %s: bioinformatics, data tools and generative art." % SITE["full_name"],
         depth=1, body=work, active="work", url_path="work/", scripts=any(p.get("thumb") for p in projects)))
