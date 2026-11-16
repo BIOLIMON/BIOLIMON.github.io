@@ -1,0 +1,280 @@
+<!doctype html>
+<!--
+  Z3PH1R :: curtain
+  the door below leads to /portal
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Z3PH1R</title>
+<link rel="stylesheet" href="assets/cursor.css">
+<style>
+  :root { --halo: #e8d9a0; }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; height: 100%; overflow: hidden;
+    background: #050507; color: #c9d1db;
+    font: 13px/1.25 "Courier New", ui-monospace, monospace;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ───────── CURTAIN ───────── */
+  #curtain {
+    position: fixed; inset: 0; z-index: 100;
+    background: #050507; color: #c9d1db;
+    overflow-y: auto; cursor: default;
+    transition: opacity .6s ease;
+  }
+  #waves { position: fixed; inset: 0; width: 100%; height: 100%; }
+  .veil {
+    position: relative; z-index: 1; min-height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 28px; padding: 56px 16px;
+    pointer-events: none;
+  }
+  .veil > * { pointer-events: auto; transition: opacity .5s ease; }
+  .hello {
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+    padding: 40px 60px; margin: -40px -60px;
+    /* sombra difusa en vez de caja: el agua se apaga suavemente alrededor del texto */
+    background: radial-gradient(ellipse closest-side at 50% 50%, rgba(5,5,7,.92) 0%, rgba(5,5,7,.75) 55%, rgba(5,5,7,0) 100%);
+  }
+  .hi {
+    margin: 0; max-width: 46ch; text-align: center; color: #aab4c2;
+    font-size: 14px; line-height: 1.5;
+  }
+  .hi b { color: var(--halo); }
+  .links { list-style: none; margin: 0; padding: 0; width: min(380px, 100%); display: grid; gap: 8px; }
+  .links a {
+    display: flex; justify-content: space-between; gap: 16px;
+    padding: 10px 12px; color: #c9d1db; text-decoration: none;
+    background: rgba(5,5,7,.82); border: 1px solid #222a35;
+    transition: border-color .2s, color .2s, transform .2s;
+  }
+  .links a span:last-child { color: #5d6878; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .links a:hover, .links a:focus-visible {
+    border-color: var(--halo); color: var(--halo); transform: translateX(4px); outline: none;
+  }
+  .links a:hover span:last-child { color: #9c9170; }
+
+  .portal {
+    all: unset; pointer-events: auto; position: relative; display: block; cursor: pointer;
+    width: min(500px, 92vw); margin-top: 44px;
+  }
+  .portal img { display: block; width: 100%; height: auto; filter: saturate(.85) contrast(1.05); }
+  /* Dissolve the image into the water: a wide fade on all four sides (horizontal ∩ vertical),
+     plus a soft patch of sky kept around the phrase so it never fades away (added on top). */
+  .portal img {
+    --keep: radial-gradient(ellipse 19.5% 20.5% at 19.5% 21%, #000 64%, transparent 100%); /* fades out before touching the image edge */
+    --h: linear-gradient(to right, transparent, #000 24%, #000 76%, transparent);
+    --v: linear-gradient(to bottom, transparent, #000 24%, #000 72%, transparent);
+    -webkit-mask-image: var(--keep), var(--h), var(--v);
+    -webkit-mask-composite: source-over, source-in;
+            mask-image: var(--keep), var(--h), var(--v);
+            mask-composite: add, intersect;
+  }
+  .portal .door {
+    position: absolute; left: 49.5%; top: 33.8%; width: 14.7%; height: 20.8%;
+    background: #000; transition: box-shadow .4s;
+  }
+  .portal .door canvas { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity .6s; }
+  #curtain.entering .door canvas { opacity: 0; }
+  .portal:hover .door, .portal:focus-visible .door { box-shadow: 0 0 28px 6px rgba(232,217,160,.55); }
+  .portal-label {
+    font-size: 11px; letter-spacing: .3em; color: #6b7686; text-transform: uppercase;
+    background: rgba(5,5,7,.8); padding: 2px 8px;
+  }
+  .portal-label::after { content: " █"; animation: blink 1s steps(1) infinite; }
+
+  #curtain.entering { overflow: hidden; }
+  #curtain.entering .veil > :not(.portal) { opacity: 0; }
+  #curtain.entering .portal { transition: transform 1.7s cubic-bezier(.75,0,.25,1); }
+</style>
+</head>
+<body>
+
+<!-- The curtain: the business card. The door leads to /portal. -->
+<div id="curtain">
+  <canvas id="waves"></canvas>
+  <div class="veil">
+    <header class="hello">
+      <p class="hi">Hi!!1 I am <b>L3M0N</b>, a biotech scientist poking at the machinery of life — with code, with data, with art.</p>
+    </header>
+    <ul class="links">
+      <li><a href="https://www.linkedin.com/in/nicol%C3%A1s-m%C3%BCller-aguirre-728832241/" target="_blank" rel="noopener"><span>linkedin</span><span>/nicolás-müller-aguirre</span></a></li>
+      <li><a href="https://www.instagram.com/__.limon/" target="_blank" rel="noopener"><span>instagram</span><span>@__.limon</span></a></li>
+      <li><a href="https://github.com/BIOLIMON" target="_blank" rel="noopener"><span>github</span><span>BIOLIMON</span></a></li>
+      <li><a href="https://orcid.org/0009-0007-4675-6881" target="_blank" rel="noopener"><span>orcid</span><span>0009-0007-4675-6881</span></a></li>
+      <li><a href="mailto:n.mulleraguirre@gmail.com"><span>mail</span><span>n.mulleraguirre@gmail.com</span></a></li>
+    </ul>
+    <button class="portal" id="portal" data-cursor="enter" aria-label="Enter the site">
+      <img src="assets/portal.png" alt="A black door standing in a meadow in front of a cloud: don't you wonder what's inside?">
+      <span class="door"><canvas id="eye"></canvas></span>
+    </button>
+    <span class="portal-label">continue</span>
+  </div>
+</div>
+
+<script>
+(() => {
+  const curtain = document.getElementById('curtain');
+  const cv = document.getElementById('waves');
+  const g = cv.getContext('2d');
+  const RAMP = ' .·:-=+*≈#%@';
+  const CELL = 12;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W, H, cols, rows, t = 0, alive = true;
+  let px = -999, py = -999, lastDrop = 0;
+  const ripples = [];
+
+  function resize() {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cols = Math.ceil(W / CELL); rows = Math.ceil(H / CELL);
+    g.font = `${CELL}px "Courier New", monospace`;
+    g.textBaseline = 'top';
+  }
+  addEventListener('resize', resize); resize();
+
+  function drop(x, y, power) {
+    ripples.push({ x: x / CELL, y: y / CELL, t0: t, p: power });
+    if (ripples.length > 24) ripples.shift();
+  }
+
+  function frame() {
+    if (!alive) return;
+    g.fillStyle = '#050507';
+    g.fillRect(0, 0, W, H);
+    const cx = px / CELL, cy = py / CELL;
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        // base swell: two crossing wave trains + a slow swell
+        let v = Math.sin(x * 0.11 + y * 0.05 - t * 1.1) * 0.35
+              + Math.sin(x * 0.04 - y * 0.13 + t * 0.7) * 0.3
+              + Math.sin((x + y) * 0.025 - t * 0.4) * 0.25;
+        // drops: rings that expand and fade
+        for (const r of ripples) {
+          const age = t - r.t0;
+          const d = Math.hypot(x - r.x, y - r.y);
+          const front = age * 18;
+          if (d > front + 6) continue;
+          v += Math.sin(d * 0.55 - age * 9) * r.p * Math.exp(-age * 0.7) * Math.exp(-Math.abs(d - front) * 0.08);
+        }
+        // the cursor lights the water
+        const near = Math.exp(-Math.hypot(x - cx, y - cy) * 0.12);
+        const n = (v + 1) / 2 + near * 0.35;
+        if (n < 0.42) continue;
+        const k = Math.min(RAMP.length - 1, Math.floor((n - 0.42) / 0.58 * RAMP.length));
+        const a = Math.min(1, 0.18 + (n - 0.42) * 1.4);
+        g.fillStyle = near > 0.25 ? `rgba(232,217,160,${a})` : `rgba(120,150,190,${a})`;
+        g.fillText(RAMP[k], x * CELL, y * CELL);
+      }
+    }
+    while (ripples.length && t - ripples[0].t0 > 6) ripples.shift();
+    t += reduce ? 0.004 : 0.016;
+    requestAnimationFrame(frame);
+  }
+  frame();
+
+  curtain.addEventListener('pointermove', e => {
+    px = e.clientX; py = e.clientY;
+    if (t - lastDrop > 0.12) { drop(px, py, 0.35); lastDrop = t; }
+  });
+  curtain.addEventListener('pointerleave', () => { px = py = -999; });
+  curtain.addEventListener('pointerdown', e => {
+    if (e.target.closest('a, .portal')) return;
+    drop(e.clientX, e.clientY, 1.2);
+  });
+
+  // Enter: zoom into the black door until the darkness fills everything.
+  const portal = document.getElementById('portal');
+  portal.addEventListener('click', () => {
+    if (curtain.classList.contains('entering')) return;
+    const door = portal.querySelector('.door').getBoundingClientRect();
+    const box = portal.getBoundingClientRect();
+    const ox = door.left + door.width / 2 - box.left;
+    const oy = door.top + door.height / 2 - box.top;
+    const tx = innerWidth / 2 - (box.left + ox);
+    const ty = innerHeight / 2 - (box.top + oy);
+    const s = Math.max(innerWidth / door.width, innerHeight / door.height) * 1.4;
+    portal.style.transformOrigin = `${ox}px ${oy}px`;
+    curtain.classList.add('entering');
+    requestAnimationFrame(() => {
+      portal.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`;
+    });
+    // once the dark fills the screen, step through: /portal is its own page
+    const ms = reduce ? 200 : 1750;
+    setTimeout(() => { location.href = 'portal/'; }, ms);
+  });
+
+  // Inside the door: an ASCII eye that watches the cursor (and blinks).
+  const ec = document.getElementById('eye');
+  const eg = ec.getContext('2d');
+  const doorEl = ec.parentElement;
+  const EC = 23; // columns
+  const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%+-=/';
+  const pick = () => CHARS[(Math.random() * CHARS.length) | 0];
+  let cells = [];
+  let ew, eh, cw, ch, erows;
+  let gx = 0, gy = 0, lookX = 0, lookY = 0, blinkAt = 3, lid = 1;
+  function eyeSize() {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    ew = doorEl.offsetWidth; eh = doorEl.offsetHeight; // layout size, unaffected by the zoom transform
+    if (!ew || !eh) return;
+    ec.width = ew * dpr; ec.height = eh * dpr;
+    eg.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cw = ew / EC; ch = cw * 1.6; erows = Math.floor(eh / ch);
+    eg.font = `${ch * 0.95}px "Courier New", monospace`;
+    eg.textBaseline = 'top'; eg.textAlign = 'center';
+    cells = Array.from({ length: EC * erows }, pick);
+  }
+  new ResizeObserver(eyeSize).observe(doorEl); // also fires once the image has loaded
+  addEventListener('pointermove', e => {
+    const r = doorEl.getBoundingClientRect();
+    const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+    const d = Math.hypot(dx, dy) || 1, k = Math.min(1, d / 220);
+    gx = dx / d * k; gy = dy / d * k;
+  });
+  function eye() {
+    if (!alive) return;
+    eg.clearRect(0, 0, ew, eh);
+    lookX += (gx - lookX) * 0.12; lookY += (gy - lookY) * 0.12;
+    // blink: lid goes 1 → 0 → 1 every few seconds
+    const since = t - blinkAt;
+    lid = since > 0 && since < 0.25 ? Math.abs(1 - since / 0.125) : 1;
+    if (since > 0.25) blinkAt = t + 2 + Math.random() * 4;
+    // coordinates in units of half the door width, so circles stay circles
+    // look inspired by Christopher Akroyd's "Ascii Eye" snippet (own implementation)
+    const ix = lookX * 0.32, iy = lookY * 0.3;
+    const PR = 0.27 + Math.sin(t * 1.3) * 0.04;     // breathing pupil
+    // a few cells re-roll their character every frame
+    for (let n = 0; n < cells.length * 0.03; n++) cells[(Math.random() * cells.length) | 0] = pick();
+    for (let y = 0; y < erows; y++) {
+      for (let x = 0; x < EC; x++) {
+        const u = ((x + 0.5) / EC) * 2 - 1;
+        const v = ((y + 0.5) * ch - eh / 2) / (ew / 2);
+        const lidH = 0.82 * (1 - u * u) * lid;          // almond
+        if (Math.abs(v) >= lidH) continue;
+        const di = Math.hypot(u - ix, v - iy);
+        if (di < PR) continue;                           // the pupil is a hole
+        // soft edges: fade toward the lids, the corners and the pupil rim
+        const toLid = 1 - Math.abs(v) / lidH;
+        const a = Math.min(1, toLid * 2.2) * Math.min(1, (1 - Math.abs(u)) * 3) * Math.min(1, (di - PR) * 14);
+        eg.fillStyle = `rgba(232,217,160,${a.toFixed(3)})`;
+        eg.fillText(cells[y * EC + x], (x + 0.5) * cw, y * ch);
+      }
+    }
+    requestAnimationFrame(eye);
+  }
+  eye();
+})();
+
+// coming back with the browser's back button restores the page mid-zoom: start clean instead
+addEventListener('pageshow', e => { if (e.persisted) location.reload(); });
+</script>
+<script src="assets/cursor.js"></script>
+</body>
+</html>

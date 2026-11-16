@@ -1,0 +1,24 @@
+  /* ───────── CURSOR: two squares + label, difference blend ───────── */
+  html.has-cursor, html.has-cursor * { cursor: none !important; }
+  .cur {
+    position: fixed; left: 0; top: 0; z-index: 2147483000; pointer-events: none;
+    mix-blend-mode: difference; opacity: 0; transition: opacity .25s;
+  }
+  .cur.on { opacity: 1; }
+  #cur-small { width: 6px; height: 6px; margin: -3px 0 0 -3px; background: #fff; }
+  #cur-big {
+    width: 16px; height: 16px; margin: -8px 0 0 -8px; border: 1px solid #fff;
+    transition: opacity .25s, width .25s, height .25s, margin .25s;
+  }
+  html.cur-hot #cur-big { width: 44px; height: 44px; margin: -22px 0 0 -22px; }
+  html.cur-down #cur-big { width: 10px; height: 10px; margin: -5px 0 0 -5px; }
+  #cur-coords {
+    margin: 14px 0 0 14px; color: #fff; white-space: nowrap;
+    font: 10px/1 "Courier New", ui-monospace, monospace; letter-spacing: .12em;
+    transition: opacity .25s, margin .25s;
+  }
+  html.cur-hot #cur-coords { margin: 26px 0 0 26px; }
+  #cur-label {
+    margin: -6px 0 0 32px; color: #fff; white-space: nowrap;
+    font: 11px/1 "Courier New", ui-monospace, monospace; letter-spacing: .25em; text-transform: uppercase;
+  }
