@@ -12,6 +12,7 @@ Standard library only (Python 3.8+).
 """
 import datetime
 import email.utils
+import hashlib
 import html
 import json
 import math
@@ -293,7 +294,7 @@ def layout(*, title, desc, depth, body, active="", url_path="", og_type="website
 <link rel="canonical" href="{url}">
 <link rel="icon" href="{icon}">
 <link rel="alternate" type="application/rss+xml" title="{name} — blog" href="{up}blog/feed.xml">
-<link rel="stylesheet" href="{up}style.css">
+<link rel="stylesheet" href="{up}{css}">
 </head>
 <body>
 {arrive}<a class="skip" href="#main">Skip to content</a>
@@ -319,9 +320,16 @@ def layout(*, title, desc, depth, body, active="", url_path="", og_type="website
 </html>
 """.format(
         title=e(full_title), desc=e(desc), og_type=og_type, url=e(page_url), name=e(SITE["name"]),
-        full_name=e(SITE["full_name"]), icon=ICON, up=up, nav=nav, body=body, year=datetime.date.today().year,
+        full_name=e(SITE["full_name"]), icon=ICON, up=up, css=asset("style.css"), nav=nav, body=body, year=datetime.date.today().year,
         arrive='<div id="arrive" aria-hidden="true"></div>\n' if arrive else "",
-        scripts=('<script src="%sroots.js" defer></script>\n' % up) if scripts else "")
+        scripts=('<script src="%s%s" defer></script>\n' % (up, asset("roots.js"))) if scripts else "")
+
+
+def asset(rel):
+    """URL of a file in portal/ with a short content hash (style.css?v=1a2b3c4d).
+    GitHub Pages lets browsers keep files for 10 minutes; a new URL whenever the content changes
+    makes visitors get the updated file at once instead of mixing new HTML with old styles."""
+    return "%s?v=%s" % (rel, hashlib.sha1((OUT / rel).read_bytes()).hexdigest()[:8])
 
 
 def write(path, text):
